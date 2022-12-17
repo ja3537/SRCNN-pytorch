@@ -3,6 +3,8 @@ import os
 from torch import nn, save
 from models import SRCNN
 from aihwkit.simulator.configs import InferenceRPUConfig
+from aihwkit.simulator.configs.utils import WeightNoiseType
+from aihwkit.inference import PCMLikeNoiseModel
 
 
 model = SRCNN()
