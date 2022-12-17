@@ -17,6 +17,7 @@ from aihwkit.nn.conversion import convert_to_analog
 from aihwkit.inference import PCMLikeNoiseModel
 from aihwkit.optim import AnalogSGD
 from aihwkit.simulator.configs import InferenceRPUConfig
+from aihwkit.simulator.configs.utils import WeightNoiseType
 
 
 if __name__ == '__main__':
