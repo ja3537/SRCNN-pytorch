@@ -18,6 +18,7 @@ from aihwkit.inference import PCMLikeNoiseModel
 from aihwkit.optim import AnalogSGD
 from aihwkit.simulator.configs import InferenceRPUConfig
 from aihwkit.simulator.configs.utils import WeightNoiseType
+from aihwkit.simulator.rpu_base import cuda
 
 
 if __name__ == '__main__':
@@ -61,7 +62,7 @@ if __name__ == '__main__':
 
     model = convert_to_analog(model, rpu_config)
 
-    model.to(device)
+    model.cuda()
     criterion = nn.MSELoss()
 
     opt = AnalogSGD(model.parameters(), lr=0.1)
