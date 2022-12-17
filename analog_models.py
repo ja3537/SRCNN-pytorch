@@ -3,9 +3,8 @@ from aihwkit.nn import AnalogConv2d
 from aihwkit.simulator.configs import InferenceRPUConfig
 from aihwkit.simulator.configs.utils import WeightNoiseType
 from aihwkit.inference import PCMLikeNoiseModel
-from aihwkit.simulator.configs.utils import (
-    WeightRemapType, WeightModifierType, WeightClipType
-)
+from aihwkit.simulator.configs.utils import WeightRemapType, WeightModifierType, WeightClipType
+
 
 
 class PCM_SRCNN(nn.Module):
