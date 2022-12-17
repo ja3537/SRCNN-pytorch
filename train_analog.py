@@ -81,7 +81,7 @@ if __name__ == '__main__':
     eval_dataset = EvalDataset(args.eval_file)
     eval_dataloader = DataLoader(dataset=eval_dataset, batch_size=1)
 
-    best_weights = copy.deepcopy(model.state_dict())
+    #best_weights = copy.deepcopy(model.state_dict())
     best_epoch = 0
     best_psnr = 0.0
 
