@@ -34,6 +34,8 @@ if __name__ == '__main__':
 
     cudnn.benchmark = True
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    #device = torch.device('cpu')
+    print(device)
 
     torch.manual_seed(args.seed)
 
