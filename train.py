@@ -122,6 +122,6 @@ if __name__ == '__main__':
     print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
     torch.save(best_weights, os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
     with open("trained_models/losses.pkl", 'wb') as f:
-        picle.dump(losses, f)
+        pickle.dump(losses, f)
     with open("trained_models/eval_psnr.pkl", 'wb') as f:
-        picle.dump(eval_psnr, f)
+        pickle.dump(eval_psnr, f)
