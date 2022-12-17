@@ -62,7 +62,9 @@ if __name__ == '__main__':
 
     model = convert_to_analog(model, rpu_config)
 
-    model.cuda()
+    if cuda.is_compiled():
+        model.cuda()
+    print(cuda.is_compiled)
     criterion = nn.MSELoss()
 
     opt = AnalogSGD(model.parameters(), lr=0.1)
