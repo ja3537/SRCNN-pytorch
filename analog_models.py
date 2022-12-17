@@ -7,7 +7,7 @@ from aihwkit.inference import PCMLikeNoiseModel
 
 class PCM_SRCNN(nn.Module):
     def __init__(self, num_channels=1):
-        super(self).__init__()
+        super().__init__()
 
         rpu_config = InferenceRPUConfig()
 
