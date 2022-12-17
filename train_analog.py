@@ -68,8 +68,8 @@ if __name__ == '__main__':
     print(cuda.is_compiled())
     criterion = nn.MSELoss()
 
-    opt = AnalogSGD(model.parameters(), lr=0.1)
-    opt.regroup_param_groups(model)
+    optimizer = AnalogSGD(model.parameters(), lr=0.1)
+    optimizer.regroup_param_groups(model)
 
     train_dataset = TrainDataset(args.train_file)
     train_dataloader = DataLoader(dataset=train_dataset,
