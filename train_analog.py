@@ -95,8 +95,8 @@ if __name__ == '__main__':
             for data in train_dataloader:
                 inputs, labels = data
 
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                inputs = inputs.to('cpu')
+                labels = labels.to('cpu')
 
                 preds = model(inputs)
 
@@ -111,7 +111,7 @@ if __name__ == '__main__':
                 t.set_postfix(loss='{:.6f}'.format(epoch_losses.avg))
                 t.update(len(inputs))
 
-        torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
+        #torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
 
         model.eval()
         epoch_psnr = AverageMeter()
@@ -119,8 +119,8 @@ if __name__ == '__main__':
         for data in eval_dataloader:
             inputs, labels = data
 
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            inputs = inputs.to('cpu')
+            labels = labels.to('cpu')
 
             with torch.no_grad():
                 preds = model(inputs).clamp(0.0, 1.0)
@@ -129,12 +129,12 @@ if __name__ == '__main__':
 
         print('eval psnr: {:.2f}'.format(epoch_psnr.avg))
 
-    #     if epoch_psnr.avg > best_psnr:
-    #         best_epoch = epoch
-    #         best_psnr = epoch_psnr.avg
-    #         save(model.state_dict(),
-    #                    os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
-    #         #best_weights = copy.deepcopy(model.state_dict())
-    #
-    # print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
-    # #torch.save(best_weights, os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
+        if epoch_psnr.avg > best_psnr:
+            best_epoch = epoch
+            best_psnr = epoch_psnr.avg
+            save(model.state_dict(),
+                       os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
+            #best_weights = copy.deepcopy(model.state_dict())
+
+    print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
+    #torch.save(best_weights, os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
