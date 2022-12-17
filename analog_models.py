@@ -3,7 +3,7 @@ from aihwkit.nn import AnalogConv2d
 from aihwkit.simulator.configs import InferenceRPUConfig
 from aihwkit.simulator.configs.utils import WeightNoiseType
 from aihwkit.inference import PCMLikeNoiseModel
-from aihwkit.simulator.configs.utils import WeightRemapType, WeightModifierType, WeightClipType
+from aihwkit.simulator.configs.utils import WeightModifierType, WeightClipType
 
 
 
@@ -31,7 +31,7 @@ class PCM_SRCNN(nn.Module):
         my_rpu_config.mapping.weight_scaling_columnwise = False
 
         my_rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
-        my_rpu_config.remap.type = WeightRemapType.CHANNELWISE_SYMMETRIC
+        #my_rpu_config.remap.type = WeightRemapType.CHANNELWISE_SYMMETRIC
         my_rpu_config.clip.type = WeightClipType.LAYER_GAUSSIAN
         my_rpu_config.clip.sigma = 2.5
 
