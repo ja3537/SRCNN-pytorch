@@ -3,7 +3,7 @@ import os
 import copy
 
 import torch
-from torch import nn
+from torch import nn, save
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import DataLoader
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         if epoch_psnr.avg > best_psnr:
             best_epoch = epoch
             best_psnr = epoch_psnr.avg
-            torch.save(model.state_dict(),
+            save(model.state_dict(),
                        os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
             #best_weights = copy.deepcopy(model.state_dict())
 
