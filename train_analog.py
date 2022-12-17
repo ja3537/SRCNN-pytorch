@@ -132,7 +132,9 @@ if __name__ == '__main__':
         if epoch_psnr.avg > best_psnr:
             best_epoch = epoch
             best_psnr = epoch_psnr.avg
-            best_weights = copy.deepcopy(model.state_dict())
+            torch.save(model.state_dict(),
+                       os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
+            #best_weights = copy.deepcopy(model.state_dict())
 
     print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
-    torch.save(best_weights, os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
+    #torch.save(best_weights, os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
