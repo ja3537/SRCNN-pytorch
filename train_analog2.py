@@ -18,7 +18,7 @@ from utils import AverageMeter, calc_psnr
 from aihwkit.optim import AnalogSGD
 # from aihwkit.simulator.configs import InferenceRPUConfig
 # from aihwkit.simulator.configs.utils import WeightNoiseType
-# from aihwkit.simulator.rpu_base import cuda
+from aihwkit.simulator.rpu_base import cuda
 
 
 if __name__ == '__main__':
