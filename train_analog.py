@@ -64,7 +64,8 @@ if __name__ == '__main__':
 
     if cuda.is_compiled():
         model.cuda()
-    print(cuda.is_compiled)
+    print('if cuda is compiled:')
+    print(cuda.is_compiled())
     criterion = nn.MSELoss()
 
     opt = AnalogSGD(model.parameters(), lr=0.1)
