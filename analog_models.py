@@ -24,19 +24,19 @@ class PCM_SRCNN(nn.Module):
         rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
 
         #more experimentation
-        my_rpu_config.mapping.digital_bias = True
-        my_rpu_config.mapping.out_scaling_columnwise = False
-        my_rpu_config.mapping.learn_out_scaling = True
-        my_rpu_config.mapping.weight_scaling_omega = 1.0
-        my_rpu_config.mapping.weight_scaling_columnwise = False
+        rpu_config.mapping.digital_bias = True
+        rpu_config.mapping.out_scaling_columnwise = False
+        rpu_config.mapping.learn_out_scaling = True
+        rpu_config.mapping.weight_scaling_omega = 1.0
+        rpu_config.mapping.weight_scaling_columnwise = False
 
-        my_rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
-        #my_rpu_config.remap.type = WeightRemapType.CHANNELWISE_SYMMETRIC
-        my_rpu_config.clip.type = WeightClipType.LAYER_GAUSSIAN
-        my_rpu_config.clip.sigma = 2.5
+        rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
+        #rpu_config.remap.type = WeightRemapType.CHANNELWISE_SYMMETRIC
+        rpu_config.clip.type = WeightClipType.LAYER_GAUSSIAN
+        rpu_config.clip.sigma = 2.5
 
-        my_rpu_config.modifier.type = WeightModifierType.ADD_NORMAL
-        my_rpu_config.modifier.std_dev = 0.1
+        rpu_config.modifier.type = WeightModifierType.ADD_NORMAL
+        rpu_config.modifier.std_dev = 0.1
 
         self.conv1 = AnalogConv2d(num_channels, 64, kernel_size=9, padding=9 // 2, rpu_config=rpu_config)
         self.conv2 = AnalogConv2d(64, 32, kernel_size=5, padding=5 // 2, rpu_config=rpu_config)
