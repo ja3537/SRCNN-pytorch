@@ -22,7 +22,7 @@ class PCM_SRCNN(nn.Module):
         # rpu_config.forward.out_noise = 0.02  # Some output noise.
 
         # specify the noise model to be used for inference only
-        #rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
+        rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
 
         #more experimentation
         # rpu_config.mapping.digital_bias = True
