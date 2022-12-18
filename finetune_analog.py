@@ -9,17 +9,18 @@ import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm
 
-from analog_models import PCM_SRCNN
+from models import SRCNN
 from datasets import TrainDataset, EvalDataset
 from utils import AverageMeter, calc_psnr
 import pickle
 
 
-# from aihwkit.inference import PCMLikeNoiseModel
+from aihwkit.inference import PCMLikeNoiseModel
 from aihwkit.optim import AnalogSGD
-# from aihwkit.simulator.configs import InferenceRPUConfig
+from aihwkit.simulator.configs import InferenceRPUConfig
 # from aihwkit.simulator.configs.utils import WeightNoiseType
 from aihwkit.simulator.rpu_base import cuda
+from aihwkit.nn.conversion import convert_to_analog
 
 
 if __name__ == '__main__':
@@ -47,7 +48,10 @@ if __name__ == '__main__':
 
     torch.manual_seed(args.seed)
 
-    model = PCM_SRCNN()
+    rpu_config = InferenceRPUConfig()
+    rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
+
+    model = SRCNN()
     model.load_state_dict(torch.load(args.model_file, map_location=device))
 
     # #set rpuconfig for PCM and convert model
@@ -63,7 +67,7 @@ if __name__ == '__main__':
     # # specify the noise model to be used for inference only
     # rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
     #
-    # model = convert_to_analog(model, rpu_config)
+    model = convert_to_analog(model, rpu_config)
 
     if cuda.is_compiled():
         model.cuda()
