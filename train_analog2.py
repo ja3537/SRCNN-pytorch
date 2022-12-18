@@ -64,6 +64,8 @@ if __name__ == '__main__':
 
     if cuda.is_compiled():
         model.cuda()
+    else:
+        model.cpu()
     print('if cuda is compiled:')
     print(cuda.is_compiled())
     criterion = nn.MSELoss()
