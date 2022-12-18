@@ -48,7 +48,7 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
 
     model = PCM_SRCNN()
-    model.load_state_dict(torch.load(args.model_file))
+    model.load_state_dict(torch.load(args.model_file), map_location=device)
 
     # #set rpuconfig for PCM and convert model
     # rpu_config = InferenceRPUConfig()
