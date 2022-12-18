@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
     #optimizer = optim.SGD(model.parameters(), lr=0.05)
     optimizer = AnalogSGD(model.parameters(), lr=0.05)
-    optimizer.regroup_param_groups(model)
+    #optimizer.regroup_param_groups(model)
 
     train_dataset = TrainDataset(args.train_file)
     train_dataloader = DataLoader(dataset=train_dataset,
