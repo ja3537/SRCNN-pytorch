@@ -15,29 +15,29 @@ class PCM_SRCNN(nn.Module):
         rpu_config = InferenceRPUConfig()
 
         # specify additional options of the non-idealities in forward to your liking
-        rpu_config.forward.inp_res = 1 / 64.  # 6-bit DAC discretization.
-        rpu_config.forward.out_res = 1 / 256.  # 8-bit ADC discretization.
-        rpu_config.forward.w_noise_type = WeightNoiseType.ADDITIVE_CONSTANT
-        rpu_config.forward.w_noise = 0.02  # Some short-term w-noise.
-        rpu_config.forward.out_noise = 0.02  # Some output noise.
+        # rpu_config.forward.inp_res = 1 / 64.  # 6-bit DAC discretization.
+        # rpu_config.forward.out_res = 1 / 256.  # 8-bit ADC discretization.
+        # rpu_config.forward.w_noise_type = WeightNoiseType.ADDITIVE_CONSTANT
+        # rpu_config.forward.w_noise = 0.02  # Some short-term w-noise.
+        # rpu_config.forward.out_noise = 0.02  # Some output noise.
 
         # specify the noise model to be used for inference only
         rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
 
         #more experimentation
-        rpu_config.mapping.digital_bias = True
-        rpu_config.mapping.out_scaling_columnwise = False
-        rpu_config.mapping.learn_out_scaling = True
-        rpu_config.mapping.weight_scaling_omega = 1.0
-        rpu_config.mapping.weight_scaling_columnwise = False
-
-        rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
-        #rpu_config.remap.type = WeightRemapType.CHANNELWISE_SYMMETRIC
-        rpu_config.clip.type = WeightClipType.LAYER_GAUSSIAN
-        rpu_config.clip.sigma = 2.5
-
-        rpu_config.modifier.type = WeightModifierType.ADD_NORMAL
-        rpu_config.modifier.std_dev = 0.1
+        # rpu_config.mapping.digital_bias = True
+        # rpu_config.mapping.out_scaling_columnwise = False
+        # rpu_config.mapping.learn_out_scaling = True
+        # rpu_config.mapping.weight_scaling_omega = 1.0
+        # rpu_config.mapping.weight_scaling_columnwise = False
+        #
+        # rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
+        # #rpu_config.remap.type = WeightRemapType.CHANNELWISE_SYMMETRIC
+        # rpu_config.clip.type = WeightClipType.LAYER_GAUSSIAN
+        # rpu_config.clip.sigma = 2.5
+        #
+        # rpu_config.modifier.type = WeightModifierType.ADD_NORMAL
+        # rpu_config.modifier.std_dev = 0.1
 
         self.gen = AnalogSequential(
             AnalogConv2d(num_channels, 64, kernel_size=9, padding=9 // 2, rpu_config=rpu_config),
