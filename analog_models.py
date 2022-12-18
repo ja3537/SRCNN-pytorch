@@ -4,6 +4,7 @@ from aihwkit.simulator.configs import InferenceRPUConfig
 from aihwkit.simulator.configs.utils import WeightNoiseType
 from aihwkit.inference import PCMLikeNoiseModel
 from aihwkit.simulator.configs.utils import WeightModifierType, WeightClipType
+from aihwkit.nn import AnalogLinear, AnalogSequential
 
 
 
@@ -38,13 +39,20 @@ class PCM_SRCNN(nn.Module):
         rpu_config.modifier.type = WeightModifierType.ADD_NORMAL
         rpu_config.modifier.std_dev = 0.1
 
-        self.conv1 = AnalogConv2d(num_channels, 64, kernel_size=9, padding=9 // 2, rpu_config=rpu_config)
-        self.conv2 = AnalogConv2d(64, 32, kernel_size=5, padding=5 // 2, rpu_config=rpu_config)
-        self.conv3 = AnalogConv2d(32, num_channels, kernel_size=5, padding=5 // 2, rpu_config=rpu_config)
-        self.relu = nn.ReLU(inplace=True)
+        self.gen = AnalogSequential(
+            AnalogConv2d(num_channels, 64, kernel_size=9, padding=9 // 2, rpu_config=rpu_config),
+            AnalogConv2d(64, 32, kernel_size=5, padding=5 // 2, rpu_config=rpu_config),
+            AnalogConv2d(32, num_channels, kernel_size=5, padding=5 // 2, rpu_config=rpu_config),
+            nn.ReLU(inplace=True),
+        )
+        # self.conv1 = AnalogConv2d(num_channels, 64, kernel_size=9, padding=9 // 2, rpu_config=rpu_config)
+        # self.conv2 = AnalogConv2d(64, 32, kernel_size=5, padding=5 // 2, rpu_config=rpu_config)
+        # self.conv3 = AnalogConv2d(32, num_channels, kernel_size=5, padding=5 // 2, rpu_config=rpu_config)
+        # self.relu = nn.ReLU(inplace=True)
 
     def forward(self, x):
-        x = self.relu(self.conv1(x))
-        x = self.relu(self.conv2(x))
-        x = self.conv3(x)
-        return x
+        # x = self.relu(self.conv1(x))
+        # x = self.relu(self.conv2(x))
+        # x = self.conv3(x)
+        # return x
+        return self.gen(x)
