@@ -153,7 +153,7 @@ if __name__ == '__main__':
             best_epoch = epoch
             best_psnr = epoch_psnr.avg
             save(model.state_dict(),
-                       os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, epoch + args.prev_epoch, args.scale)))
+                       os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, epoch + args.prev_epoch + 1, args.scale)))
             with open("trained_models/losses.pkl", 'wb') as f:
                 pickle.dump(losses, f)
             with open("trained_models/eval_psnr.pkl", 'wb') as f:
