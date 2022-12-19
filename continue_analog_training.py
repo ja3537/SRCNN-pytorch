@@ -53,9 +53,6 @@ if __name__ == '__main__':
     rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
 
     model = PCM_SRCNN()
-    model.load_state_dict(torch.load(args.model_file, map_location=device))
-
-    model = PCM_SRCNN()
     model_file= ''
     model.load_state_dict(torch.load(os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.prev_epoch, args.scale)), map_location=device))
 
