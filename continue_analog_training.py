@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     model = PCM_SRCNN()
     model_file= ''
-    model.load_state_dict(torch.load( os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.prev_epoch, args.scale))), map_location=device))
+    model.load_state_dict(torch.load(os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.prev_epoch, args.scale)), map_location=device))
 
     with open("trained_models/losses.pkl", 'rb') as f:
         losses = pickle.load(f)
