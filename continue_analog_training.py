@@ -73,7 +73,6 @@ if __name__ == '__main__':
     # # specify the noise model to be used for inference only
     # rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
     #
-    model = convert_to_analog(model, rpu_config)
 
     if cuda.is_compiled():
         model.cuda()
