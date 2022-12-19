@@ -59,6 +59,10 @@ if __name__ == '__main__':
     model_file= ''
     model.load_state_dict(torch.load( os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.prev_epoch, args.scale))), map_location=device))
 
+    with open("trained_models/losses.pkl", 'rb') as f:
+        losses = pickle.load(f)
+    with open("trained_models/eval_psnr.pkl", 'rb') as f:
+        eval_psnr = pickle.load(f)
     # #set rpuconfig for PCM and convert model
     # rpu_config = InferenceRPUConfig()
     #
@@ -99,8 +103,6 @@ if __name__ == '__main__':
     #best_weights = copy.deepcopy(model.state_dict())
     best_epoch = 0
     best_psnr = 0.0
-    losses = []
-    eval_psnr = []
 
     for epoch in range(args.num_epochs):
         model.train()
