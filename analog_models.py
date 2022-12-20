@@ -9,10 +9,12 @@ from aihwkit.nn import AnalogLinear, AnalogSequential
 
 
 class PCM_SRCNN(nn.Module):
-    def __init__(self, num_channels=1):
+    def __init__(self, num_channels=1, drift_compensation=False):
         super().__init__()
 
         rpu_config = InferenceRPUConfig()
+        if drift_compensation:
+            rpu_config.drift_compensation = GlobalDriftCompensation()
 
         # specify additional options of the non-idealities in forward to your liking
         # rpu_config.forward.inp_res = 1 / 64.  # 6-bit DAC discretization.
