@@ -26,6 +26,7 @@ if __name__ == '__main__':
     rpu_config = InferenceRPUConfig()
     rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
     model = convert_to_analog(model, rpu_config)
+    model.to(device)
 
     state_dict = model.state_dict()
     for n, p in torch.load(args.weights_file, map_location=lambda storage, loc: storage).items():
