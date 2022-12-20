@@ -28,12 +28,12 @@ if __name__ == '__main__':
     model = convert_to_analog(model, rpu_config)
     model.to(device)
 
-    state_dict = model.state_dict()
-    for n, p in torch.load(args.weights_file, map_location=lambda storage, loc: storage).items():
-        if n in state_dict.keys():
-            state_dict[n].copy_(p)
-        else:
-            raise KeyError(n)
+    # state_dict = model.state_dict()
+    # for n, p in torch.load(args.weights_file, map_location=lambda storage, loc: storage).items():
+    #     if n in state_dict.keys():
+    #         state_dict[n].copy_(p)
+    #     else:
+    #         raise KeyError(n)
 
     model.eval()
 
