@@ -6,6 +6,7 @@ import numpy as np
 import PIL.Image as pil_image
 
 from models import SRCNN
+from analog_models import PCM_SRCNN
 from utils import convert_rgb_to_ycbcr, convert_ycbcr_to_rgb, calc_psnr
 
 from aihwkit.inference import PCMLikeNoiseModel, GlobalDriftCompensation
@@ -31,6 +32,9 @@ if __name__ == '__main__':
     if args.drift and args.compensation:
         rpu_config.drift_compensation = GlobalDriftCompensation()
     model = convert_to_analog(model, rpu_config)
+    tmp = PCM_SRCNN(drift_compensation=args.compensation)
+    tmp.load_state_dict(model.state_dict())
+    model = tmp
     if args.drift:
         model.drift_analog_weights(1000)
     model.to(device)
