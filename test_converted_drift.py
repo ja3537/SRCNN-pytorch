@@ -17,8 +17,8 @@ if __name__ == '__main__':
     parser.add_argument('--weights-file', type=str, required=True)
     parser.add_argument('--image-file', type=str, required=True)
     parser.add_argument('--scale', type=int, default=3)
-    parser.add_argument('--drift', type=bool, default=False, action="store_true")
-    parser.add_argument('--compensation', type=bool, default=False, action='store_true')
+    parser.add_argument('--drift', default=False, action="store_true")
+    parser.add_argument('--compensation', default=False, action='store_true')
     args = parser.parse_args()
 
     cudnn.benchmark = True
