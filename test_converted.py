@@ -23,6 +23,7 @@ if __name__ == '__main__':
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     model = SRCNN()
+    model.load_state_dict(torch.load(args.weights-file, map_location=device))
     rpu_config = InferenceRPUConfig()
     rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)
     model = convert_to_analog(model, rpu_config)
