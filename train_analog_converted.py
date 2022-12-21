@@ -9,16 +9,15 @@ import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm
 
-from analog_models import PCM_SRCNN
+from models import SRCNN
 from datasets import TrainDataset, EvalDataset
 from utils import AverageMeter, calc_psnr
-import pickle
 
-
-# from aihwkit.inference import PCMLikeNoiseModel
+from aihwkit.nn.conversion import convert_to_analog
+from aihwkit.inference import PCMLikeNoiseModel
 from aihwkit.optim import AnalogSGD
-# from aihwkit.simulator.configs import InferenceRPUConfig
-# from aihwkit.simulator.configs.utils import WeightNoiseType
+from aihwkit.simulator.configs import InferenceRPUConfig
+from aihwkit.simulator.configs.utils import WeightNoiseType
 from aihwkit.simulator.rpu_base import cuda
 
 
@@ -46,34 +45,31 @@ if __name__ == '__main__':
 
     torch.manual_seed(args.seed)
 
-    model = PCM_SRCNN()
+    model = SRCNN()
 
-    # #set rpuconfig for PCM and convert model
-    # rpu_config = InferenceRPUConfig()
-    #
-    # # specify additional options of the non-idealities in forward to your liking
-    # rpu_config.forward.inp_res = 1 / 64.  # 6-bit DAC discretization.
-    # rpu_config.forward.out_res = 1 / 256.  # 8-bit ADC discretization.
-    # rpu_config.forward.w_noise_type = WeightNoiseType.ADDITIVE_CONSTANT
-    # rpu_config.forward.w_noise = 0.02  # Some short-term w-noise.
-    # rpu_config.forward.out_noise = 0.02  # Some output noise.
-    #
-    # # specify the noise model to be used for inference only
-    # rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
-    #
-    # model = convert_to_analog(model, rpu_config)
+    #set rpuconfig for PCM and convert model
+    rpu_config = InferenceRPUConfig()
+
+    # specify additional options of the non-idealities in forward to your liking
+    rpu_config.forward.inp_res = 1 / 64.  # 6-bit DAC discretization.
+    rpu_config.forward.out_res = 1 / 256.  # 8-bit ADC discretization.
+    rpu_config.forward.w_noise_type = WeightNoiseType.ADDITIVE_CONSTANT
+    rpu_config.forward.w_noise = 0.02  # Some short-term w-noise.
+    rpu_config.forward.out_noise = 0.02  # Some output noise.
+
+    # specify the noise model to be used for inference only
+    rpu_config.noise_model = PCMLikeNoiseModel(g_max=25.0)  # the model described
+
+    model = convert_to_analog(model, rpu_config)
 
     if cuda.is_compiled():
         model.cuda()
-    else:
-        model.cpu()
     print('if cuda is compiled:')
     print(cuda.is_compiled())
     criterion = nn.MSELoss()
 
-    #optimizer = optim.SGD(model.parameters(), lr=0.05)
-    optimizer = AnalogSGD(model.parameters(), lr=args.lr)
-    #optimizer.regroup_param_groups(model)
+    optimizer = AnalogSGD(model.parameters(), lr=0.1)
+    optimizer.regroup_param_groups(model)
 
     train_dataset = TrainDataset(args.train_file)
     train_dataloader = DataLoader(dataset=train_dataset,
@@ -88,13 +84,10 @@ if __name__ == '__main__':
     #best_weights = copy.deepcopy(model.state_dict())
     best_epoch = 0
     best_psnr = 0.0
-    losses = []
-    eval_psnr = []
 
     for epoch in range(args.num_epochs):
         model.train()
         epoch_losses = AverageMeter()
-        total_loss = 0
 
         with tqdm(total=(len(train_dataset) - len(train_dataset) % args.batch_size)) as t:
             t.set_description('epoch: {}/{}'.format(epoch, args.num_epochs - 1))
@@ -108,7 +101,6 @@ if __name__ == '__main__':
                 preds = model(inputs)
 
                 loss = criterion(preds, labels)
-                total_loss += loss
 
                 epoch_losses.update(loss.item(), len(inputs))
 
@@ -120,7 +112,6 @@ if __name__ == '__main__':
                 t.update(len(inputs))
 
         #torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
-        losses.append(total_loss / len(inputs))
 
         model.eval()
         epoch_psnr = AverageMeter()
@@ -128,15 +119,13 @@ if __name__ == '__main__':
         for data in eval_dataloader:
             inputs, labels = data
 
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            inputs = inputs.to('cpu')
+            labels = labels.to('cpu')
 
             with torch.no_grad():
                 preds = model(inputs).clamp(0.0, 1.0)
 
-            psnr = calc_psnr(preds, labels)
-            epoch_psnr.update(psnr, len(inputs))
-            eval_psnr.append(psnr / len(inputs))
+            epoch_psnr.update(calc_psnr(preds, labels), len(inputs))
 
         print('eval psnr: {:.2f}'.format(epoch_psnr.avg))
 
@@ -144,11 +133,7 @@ if __name__ == '__main__':
             best_epoch = epoch
             best_psnr = epoch_psnr.avg
             save(model.state_dict(),
-                       os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, epoch, args.scale)))
-            with open("trained_models/losses.pkl", 'wb') as f:
-                pickle.dump(losses, f)
-            with open("trained_models/eval_psnr.pkl", 'wb') as f:
-                pickle.dump(eval_psnr, f)
+                       os.path.join(args.outputs_dir, 'best_{}_{}_{}.pth'.format(args.lr, args.num_epochs, args.scale)))
             #best_weights = copy.deepcopy(model.state_dict())
 
     print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))
