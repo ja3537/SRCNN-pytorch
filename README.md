@@ -1,14 +1,11 @@
-# SRCNN
+# SRCNN with Hardware-Aware Analog Training
+
+We apply a analog version of the SRCNN network to the SISR problem using IBM's aihwkit.
 
 This repository is implementation of the ["Image Super-Resolution Using Deep Convolutional Networks"](https://arxiv.org/abs/1501.00092).
 
 <center><img src="./thumbnails/fig1.png"></center>
 
-## Differences from the original
-
-- Added the zero-padding
-- Used the Adam instead of the SGD
-- Removed the weights initialization
 
 ## Requirements
 
@@ -17,6 +14,7 @@ This repository is implementation of the ["Image Super-Resolution Using Deep Con
 - Pillow 5.4.1
 - h5py 2.8.0
 - tqdm 4.30.0
+- aihwkit
 
 ## Train
 
@@ -33,6 +31,8 @@ The 91-image, Set5 dataset converted to HDF5 can be downloaded from the links be
 
 Otherwise, you can use `prepare.py` to create custom dataset.
 
+Here is an example of digital training:
+
 ```bash
 python train.py --train-file "BLAH_BLAH/91-image_x3.h5" \
                 --eval-file "BLAH_BLAH/Set5_x3.h5" \
@@ -45,9 +45,38 @@ python train.py --train-file "BLAH_BLAH/91-image_x3.h5" \
                 --seed 123                
 ```
 
+Here is an example of analog training from scratch:
+
+```bash
+python train_analog.py --train-file "BLAH_BLAH/91-image_x3.h5" \
+                --eval-file "BLAH_BLAH/Set5_x3.h5" \
+                --outputs-dir "BLAH_BLAH/outputs" \
+                --scale 3 \
+                --lr 1e-4 \
+                --batch-size 16 \
+                --num-epochs 400 \
+                --num-workers 8 \
+                --seed 123                
+```
+
+Here is an example of finetuning a digital model in analog form:
+
+```bash
+python finetune_analog.py --train-file "BLAH_BLAH/91-image_x3.h5" \
+                --eval-file "BLAH_BLAH/Set5_x3.h5" \
+                --outputs-dir "BLAH_BLAH/outputs" \
+                --train-file "BLAH_BLAH/digital-model.pth" \
+                --scale 3 \
+                --lr 1e-4 \
+                --batch-size 16 \
+                --num-epochs 400 \
+                --num-workers 8 \
+                --seed 123                
+```
+
 ## Test
 
-Pre-trained weights can be downloaded from the links below.
+Pre-trained weights for the digital networks can be downloaded from the links below.
 
 | Model | Scale | Link |
 |-------|-------|------|
@@ -57,73 +86,25 @@ Pre-trained weights can be downloaded from the links below.
 
 The results are stored in the same path as the query image.
 
+for digital:
 ```bash
 python test.py --weights-file "BLAH_BLAH/srcnn_x3.pth" \
                --image-file "data/butterfly_GT.bmp" \
                --scale 3
 ```
 
+for analog:
+```bash
+python test_analog.py --weights-file "BLAH_BLAH/analog_model.pth" \
+               --image-file "data/butterfly_GT.bmp" \
+               --scale 3
+```
+
 ## Results
 
-We used the network settings for experiments, i.e., <a href="https://www.codecogs.com/eqnedit.php?latex={&space;f&space;}_{&space;1&space;}=9,{&space;f&space;}_{&space;2&space;}=5,{&space;f&space;}_{&space;3&space;}=5,{&space;n&space;}_{&space;1&space;}=64,{&space;n&space;}_{&space;2&space;}=32,{&space;n&space;}_{&space;3&space;}=1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{&space;f&space;}_{&space;1&space;}=9,{&space;f&space;}_{&space;2&space;}=5,{&space;f&space;}_{&space;3&space;}=5,{&space;n&space;}_{&space;1&space;}=64,{&space;n&space;}_{&space;2&space;}=32,{&space;n&space;}_{&space;3&space;}=1" title="{ f }_{ 1 }=9,{ f }_{ 2 }=5,{ f }_{ 3 }=5,{ n }_{ 1 }=64,{ n }_{ 2 }=32,{ n }_{ 3 }=1" /></a>.
+<center><img src="./thumbnails/eval_results_graph.jpg"></center>
 
-PSNR was calculated on the Y channel.
+<center><img src="./thumbnails/qualitative_comparison.png"></center>
 
-### Set5
 
-| Eval. Mat | Scale | SRCNN | SRCNN (Ours) |
-|-----------|-------|-------|--------------|
-| PSNR | 2 | 36.66 | 36.65 |
-| PSNR | 3 | 32.75 | 33.29 |
-| PSNR | 4 | 30.49 | 30.25 |
-
-<table>
-    <tr>
-        <td><center>Original</center></td>
-        <td><center>BICUBIC x3</center></td>
-        <td><center>SRCNN x3 (27.53 dB)</center></td>
-    </tr>
-    <tr>
-    	<td>
-    		<center><img src="./data/butterfly_GT.bmp""></center>
-    	</td>
-    	<td>
-    		<center><img src="./data/butterfly_GT_bicubic_x3.bmp"></center>
-    	</td>
-    	<td>
-    		<center><img src="./data/butterfly_GT_srcnn_x3.bmp"></center>
-    	</td>
-    </tr>
-    <tr>
-        <td><center>Original</center></td>
-        <td><center>BICUBIC x3</center></td>
-        <td><center>SRCNN x3 (29.30 dB)</center></td>
-    </tr>
-    <tr>
-    	<td>
-    		<center><img src="./data/zebra.bmp""></center>
-    	</td>
-    	<td>
-    		<center><img src="./data/zebra_bicubic_x3.bmp"></center>
-    	</td>
-    	<td>
-    		<center><img src="./data/zebra_srcnn_x3.bmp"></center>
-    	</td>
-    </tr>
-    <tr>
-        <td><center>Original</center></td>
-        <td><center>BICUBIC x3</center></td>
-        <td><center>SRCNN x3 (28.58 dB)</center></td>
-    </tr>
-    <tr>
-    	<td>
-    		<center><img src="./data/ppt3.bmp""></center>
-    	</td>
-    	<td>
-    		<center><img src="./data/ppt3_bicubic_x3.bmp"></center>
-    	</td>
-    	<td>
-    		<center><img src="./data/ppt3_srcnn_x3.bmp"></center>
-    	</td>
-    </tr>
-</table>
+We found in general that fine-tuning analog models perform worse than those trained from scratch.
